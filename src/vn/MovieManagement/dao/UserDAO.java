@@ -3,6 +3,8 @@ package vn.MovieManagement.dao;
 import vn.MovieManagement.util.DBConnection;
 import java.sql.*;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 public class UserDAO {
 
     public int checkLogin(String user, String passWord) {
@@ -28,9 +30,24 @@ public class UserDAO {
         PreparedStatement psmt = conn.prepareStatement(sql)) {
             psmt.setString(1, user);
             psmt.setString(2, passWord);
+            psmt.executeUpdate();
         }
         catch(SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean checkUserName(String user) {
+        String sql = "SELECT id FROM Users WHERE username = user";
+        try(Connection conn = DBConnection.getConnection();
+        Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next()) {
+                return true;
+            }
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return false;
     }
 }

@@ -7,8 +7,8 @@ public class author extends BaseObject{
     private int AuthorNumber;
     private int id;
     public author(String Name, String description, int age, String country, 
-                  String code, int userID, int AuthorNumber, int id) {
-        super(Name, description, userID);
+                  String code, int AuthorNumber, int id) {
+        super(Name, description);
         this.age = age;
         this.country = country;
         this.code = code;

@@ -9,8 +9,8 @@ public class Movie extends BaseObject{
     private int id;
 
     public Movie(String Name, String description, String link, int AuthorNumber,
-                String duration, String date, String code, int userID, int id) {
-        super(Name, description, userID);
+                String duration, String date, String code, int id) {
+        super(Name, description);
         this.link = link;
         this.duration = duration;
         this.date = date;
