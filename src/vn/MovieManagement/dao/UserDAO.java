@@ -24,7 +24,8 @@ public class UserDAO {
         return -1;
     }
 
-    public void register(String user, String passWord) {
+    public boolean register(String user, String passWord) {
+        if(checkUserName(user)) return false;
         String sql = "INSERT INTO Users(username, password) VALUES(?, ?)";
         try(Connection conn = DBConnection.getConnection(); 
         PreparedStatement psmt = conn.prepareStatement(sql)) {
@@ -35,6 +36,7 @@ public class UserDAO {
         catch(SQLException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     public boolean checkUserName(String user) {
