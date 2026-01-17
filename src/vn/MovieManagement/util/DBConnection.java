@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String url = "jdbc:sqlite:C:\\hoang\\SQL Project\\db";
+    private static final String url = "jdbc:sqlite:data.db";
     
     public static Connection getConnection() {
         try {
@@ -13,7 +13,7 @@ public class DBConnection {
             return conn;
         }
         catch(SQLException e) {
-            System.err.println("Loi ket noi Database: " + e.getMessage());
+            System.err.println("database connection error: " + e.getMessage());
             return null;
         }
     }
