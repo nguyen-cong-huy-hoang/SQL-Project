@@ -8,7 +8,7 @@ public class MovieManagement {
     private int Size;
     private ArrayList<Movie> movieManagement;
     private ArrayList<Boolean> Mark;
-    private static MovieManagement Instance = null;
+    private static MovieManagement Instance;
     private MovieManagement() {
         movieManagement = new ArrayList<>();
         Size = 0;
@@ -35,6 +35,7 @@ public class MovieManagement {
 
     public void clear() {
         movieManagement.clear();
+        Size = 0;
     }
 
     public void print() {
@@ -86,4 +87,7 @@ public class MovieManagement {
         Mark.set(id, val);
     }
     
+    public boolean getMark(int id) {
+        return Mark.get(id);
+    }
 }
