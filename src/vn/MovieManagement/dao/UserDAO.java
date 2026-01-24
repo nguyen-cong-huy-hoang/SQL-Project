@@ -3,8 +3,30 @@ package vn.MovieManagement.dao;
 import vn.MovieManagement.util.DBConnection;
 import java.sql.*;
 
+import org.w3c.dom.UserDataHandler;
+
 
 public class UserDAO {
+
+    private UserDAO(){};
+
+    public static boolean createTable() {
+        String users = "CREATE TABLE IF NOT EXISTS Users (" +
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                       "username NCHAR(15) NOT NULL," +
+                       "password CHAR(100))";
+
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(users);
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public static int checkLogin(String user, String passWord) {
         String sql = "SELECT id FROM users where username = ? AND password = ?";
