@@ -1,24 +1,17 @@
 package vn.MovieManagement.model;
 
 import java.util.ArrayList;
+
 public class AuthorManagement {
     private ArrayList<author> authorManagement;
-    private static AuthorManagement Instance;
     private int Size;
-    private ArrayList<Boolean> Mark;
 
-    private AuthorManagement() {
+
+    public AuthorManagement() {
         authorManagement = new ArrayList<>();
         Size = 0;
-        Mark = new ArrayList<>();
     }
 
-    public static AuthorManagement getInstance() {
-        if(Instance == null) {
-            return new AuthorManagement();
-        }
-        return Instance;
-    }
 
     public void add(int id, author Author) {
         authorManagement.set(id, Author);
@@ -38,25 +31,38 @@ public class AuthorManagement {
 
     public void print() {
 
-    }
+        String format = "| %-7s | %-15.15s | %-5s | %-15.15s | %-10s | %-30.30s |%n";
 
-    public void MarkTrue() {
-        for(author a : authorManagement) {
-            Mark.set(a.getID(), true);
-        }
-    }
+ 
+        String header = String.format(format, "USER ID", "NAME", "AGE", "COUNTRY", "CODE", "DESCRIPTION");
 
-    public void MarkFalse() {
-        for(author a : authorManagement) {
-            Mark.set(a.getID(), false);
-        }
-    }
+        int tableLength = header.length() - System.lineSeparator().length();
+        String separator = "-".repeat(tableLength);
 
-    public void setMark(int id, boolean val) {
-        Mark.set(id, val);
-    }
+        System.out.println(separator);
+        System.out.print(header);
+        System.out.println(separator);
+
+
+        if (authorManagement == null || authorManagement.isEmpty()) {
+            String msg = "DATA DOES NOT EXIST";
     
-    public boolean getMark(int id) {
-        return Mark.get(id);
+            int padding = (tableLength - msg.length() - 4);
+            System.out.printf("| %-" + (tableLength - 4) + "s |%n", msg);
+        } else {
+            for (author a : authorManagement) {
+                System.out.printf(format,
+                    a.getID(),              
+                    a.getName(),         
+                    a.getAge(),         
+                    a.getCountry(),       
+                    a.getCode(),             
+                    (a.getDescription() == null ? "" : a.getDescription())
+                );
+            }
+        }
+        System.out.println(separator);
     }
+
+
 }

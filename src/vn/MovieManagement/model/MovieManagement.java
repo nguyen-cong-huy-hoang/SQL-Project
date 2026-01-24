@@ -1,26 +1,15 @@
 package vn.MovieManagement.model;
 
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class MovieManagement {
     private int Size;
     private ArrayList<Movie> movieManagement;
-    private ArrayList<Boolean> Mark;
-    private static MovieManagement Instance;
-    private MovieManagement() {
+    public MovieManagement() {
         movieManagement = new ArrayList<>();
         Size = 0;
-        Mark = new ArrayList<>();
     }
 
-    public static MovieManagement getInstance() {
-        if(Instance == null) {
-            return new MovieManagement();
-        }
-        return Instance;
-    }
 
     public void add(int id, Movie movie) {
         movieManagement.add(id, movie);
@@ -56,7 +45,7 @@ public class MovieManagement {
             System.out.printf("| %-" + padding + "s |%n", msg);
         } else {
             for (Movie m : movieManagement) {
-                if(Mark.get(m.getID()) == true) {
+
                     System.out.printf(format,
                         m.getCode(),               
                         m.getName(),                    
@@ -67,27 +56,7 @@ public class MovieManagement {
                     );
                 }
             }
-        }
         System.out.println(separator);
     }
 
-    public void MarkTrue() {
-        for(Movie m : movieManagement) {
-            Mark.set(m.getID(), true);
-        }
-    }
-
-    public void MarkFalse() {
-        for(Movie m : movieManagement) {
-            Mark.set(m.getID(), false);
-        }
-    }
-
-    public void setMark(int id, boolean val) {
-        Mark.set(id, val);
-    }
-    
-    public boolean getMark(int id) {
-        return Mark.get(id);
-    }
 }
