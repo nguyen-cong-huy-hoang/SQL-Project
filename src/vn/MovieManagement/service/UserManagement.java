@@ -5,20 +5,15 @@ import java.util.ArrayList;
 public class UserManagement {
     private ArrayList<User> userManager;
     private int size;
-    private static UserManagement Instance;
 
-    private UserManagement() {
+    public UserManagement() {
         userManager = new ArrayList<>();
         size = 0;
     }
 
-    public static UserManagement getInstance() {
-        if(Instance == null) {
-            return new UserManagement();
-        }
-        return Instance;
+    public int Size() {
+        return this.size;
     }
-
     public void add(int id, User user) {
         userManager.add(id, user);
         size++;

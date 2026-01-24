@@ -3,7 +3,7 @@ package vn.MovieManagement.service;
 import vn.MovieManagement.model.Movie;
 import java.util.ArrayList;
 
-public class MovieManagement {
+public class MovieManagement implements IMovieManagement {
     private int Size;
     private ArrayList<Movie> movieManagement;
     public MovieManagement() {
@@ -11,6 +11,9 @@ public class MovieManagement {
         Size = 0;
     }
 
+    public int Size() {
+        return this.Size();
+    }
 
     public void add(int id, Movie movie) {
         movieManagement.add(id, movie);

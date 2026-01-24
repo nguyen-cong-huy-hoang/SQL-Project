@@ -3,7 +3,7 @@ package vn.MovieManagement.service;
 import vn.MovieManagement.model.author;
 import java.util.ArrayList;
 
-public class AuthorManagement {
+public class AuthorManagement implements IAuthorManagement {
     private ArrayList<author> authorManagement;
     private int Size;
 
@@ -11,6 +11,10 @@ public class AuthorManagement {
     public AuthorManagement() {
         authorManagement = new ArrayList<>();
         Size = 0;
+    }
+
+    public int Size() {
+        return this.Size;
     }
 
 
