@@ -7,9 +7,10 @@ public class Movie extends BaseObject{
     private String code;
     private int AuthorNumber;
     private int id;
+    private int User_ID;
 
     public Movie(String Name, String description, String link, int AuthorNumber,
-                String duration, String date, String code, int id) {
+                String duration, String date, String code, int id, int User_ID) {
         super(Name, description);
         this.link = link;
         this.duration = duration;
@@ -17,6 +18,7 @@ public class Movie extends BaseObject{
         this.code = code;
         this.AuthorNumber = AuthorNumber;
         this.id = id;
+        this.User_ID = User_ID;
     }
 
     public String  getLink() { return this.link; }
@@ -25,6 +27,7 @@ public class Movie extends BaseObject{
     public String getCode() { return this.code; }
     public int getAuthorNumber() { return this.AuthorNumber; }
     public int getID() { return this.id; }
+    public int getUserID() { return this.User_ID; }
 
     public void setLink(String link) { this.link = link; }
     public void setDuration(String duration) { this.duration = duration; }
@@ -32,4 +35,5 @@ public class Movie extends BaseObject{
     public void setCode(String code) { this.code = code; }
     public void setAuthorNumber(int AuthorNumber) { this.AuthorNumber = AuthorNumber; }
     public void setID(int id) { this.id = id; }
+    public void setUserID(int User_ID) { this.User_ID = User_ID; }
 }

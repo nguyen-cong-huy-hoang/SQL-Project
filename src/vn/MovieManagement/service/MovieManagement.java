@@ -32,9 +32,9 @@ public class MovieManagement implements IMovieManagement {
     }
 
     public void print() {
-        String format = "| %-10s | %-15.15s | %-10s | %-12s | %-30.30s |%n";
+        String format = "| %-10d | %-15.15s | %-10s | %-12s | %-10s | %-30.30s |%n";
 
-        String header = String.format(format, "CODE", "NAME", "DURATION", "DATE", "DESCRIPTION");
+        String header = String.format(format, "ID", "NAME", "DURATION", "CODE", "DATE", "DESCRIPTION");
 
         int tableLength = header.length() - System.lineSeparator().length();
         String separator = "-".repeat(tableLength);
@@ -51,10 +51,10 @@ public class MovieManagement implements IMovieManagement {
             for (Movie m : movieManagement) {
 
                     System.out.printf(format,
-                        m.getCode(),               
+                        m.getID(),               
                         m.getName(),                    
                         m.getDuration(),         
-                        m.getID(),                
+                        m.getCode(),                
                         String.valueOf(m.getDate()), 
                         (m.getDescription() == null ? "" : m.getDescription()) 
                     );

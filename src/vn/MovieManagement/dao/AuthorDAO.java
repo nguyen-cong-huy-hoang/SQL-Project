@@ -8,14 +8,13 @@ public class AuthorDAO {
     
     public static boolean createTable() {
         String authors = "CREATE TABLE IF NOT EXISTS Authors (" +
-                         "id INTEGER," +
+                         "id INTEGER AUTOINCREMENT," +
                          "Name NCHAR(15) NOT NULL," +
                          "Description TEXT," +
                          "Age INTEGER," +
                          "Country NCHAR(15) NOT NULL," +
-                         "Code CHAR(10)," +
-                         "FOREIGN KEY (id) REFERENCES Users(id)," +
-                         "FOREIGN KEY (Code) REFERENCES Movies(Code))";
+                         "User_ID INTEGER," +
+                         "FOREIGN KEY (User_ID) REFERENCES Users(id),";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(authors);
@@ -28,9 +27,9 @@ public class AuthorDAO {
     }
 
     public static boolean addAuthor(int id, String name, String description,
-                                    int age, String country, String code) {
+                                    int age, String country, int UserID) {
 
-        String sql = "INSERT INTO Authors(id, Name, Description, Age, Country, Code) " +
+        String sql = "INSERT INTO Authors(id, Name, Description, Age, Country, UserID) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
@@ -54,8 +53,7 @@ public class AuthorDAO {
             }
 
             stmt.setString(5, country);
-            stmt.setString(6, code);
-
+            stmt.setInt(6, UserID);
             stmt.executeUpdate();
             return true;
 

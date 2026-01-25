@@ -36,10 +36,10 @@ public class AuthorManagement implements IAuthorManagement {
 
     public void print() {
 
-        String format = "| %-7s | %-15.15s | %-5s | %-15.15s | %-10s | %-30.30s |%n";
+        String format = "| %-10d | %-15.15s | %-5s | %-15.15s | %-30.30s |%n";
 
  
-        String header = String.format(format, "USER ID", "NAME", "AGE", "COUNTRY", "CODE", "DESCRIPTION");
+        String header = String.format(format, "ID", "NAME", "AGE", "COUNTRY", "DESCRIPTION");
 
         int tableLength = header.length() - System.lineSeparator().length();
         String separator = "-".repeat(tableLength);
@@ -60,8 +60,7 @@ public class AuthorManagement implements IAuthorManagement {
                     a.getID(),              
                     a.getName(),         
                     a.getAge(),         
-                    a.getCountry(),       
-                    a.getCode(),             
+                    a.getCountry(),                  
                     (a.getDescription() == null ? "" : a.getDescription())
                 );
             }
