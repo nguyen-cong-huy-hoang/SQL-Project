@@ -4,21 +4,10 @@ import vn.MovieManagement.util.DBConnection;
 import vn.MovieManagement.model.Movie;
 import java.sql.*;
 import java.util.ArrayList;
+import vn.MovieManagement.enums.Movie.*;
 
 public class MovieDAO {
-    enum SortField {
-        NAME("Name"),
-        DATE("Date"),
-        DURATION("Duration");
-
-        private final String column;
-        SortField(String column) {
-            this.column = column;
-        }
-        public String getColumn() {
-            return column;
-        }
-    }
+    
     public static void createTable() {
         String movies = "CREATE TABLE IF NOT EXISTS Movies (" +
                         "id INTEGER AUTOINCREMENT," +
@@ -74,6 +63,7 @@ public class MovieDAO {
 
             stmt.setString(7, code);
             stmt.setInt(8,User_ID);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -92,7 +82,6 @@ public class MovieDAO {
                 rs.getString("Name"),
                 rs.getString("Description"),
                 rs.getString("Link"),
-                rs.getInt("AuthorNumber"),
                 rs.getString("Duration"),
                 rs.getString("Date"),
                 rs.getString("Code"),
@@ -119,7 +108,18 @@ public class MovieDAO {
         }
     }
 
-    public static ArrayList<Movie> sort(int UserID, SortField field, boolean desc) {
+    public static void clear() {
+        String sql = "DELETE FROM Movies";
+        try(Connection conn = DBConnection.getConnection();
+            Statement stmt = conn.createStatement()) {
+           stmt.executeUpdate(sql);
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }        
+    }
+
+
+    public static ArrayList<Movie> sort(int UserID, MovieSortField field, boolean desc) {
         String sql = "SELECT * FROM Movies WHERE UserID = ? ORDER BY " + field.getColumn() + (desc ? " DESC" : " ASC");
         ArrayList<Movie> mv = new ArrayList<>();
         try(Connection conn = DBConnection.getConnection();
@@ -131,7 +131,6 @@ public class MovieDAO {
                 rs.getString("Name"),
                 rs.getString("Description"),
                 rs.getString("Link"),
-                rs.getInt("AuthorNumber"),
                 rs.getString("Duration"),
                 rs.getString("Date"),
                 rs.getString("Code"),
@@ -147,6 +146,80 @@ public class MovieDAO {
         return mv;
     }
 
+    public static void update (int userId, int id, MovieTypeChar field, String value) {
+        String sql = "UPDATE Movies SET " 
+                + field.getColumn()
+                + " = ? WHERE User_ID = ? AND id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, value);
+            stmt.setInt(2, userId);
+            stmt.setInt(3, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+    }
 
 
+    public static void update (int userId, int id, MovieTypeDate field, String value) {
+        String sql = "UPDATE Movies SET " 
+                + field.getColumn()
+                + " = ? WHERE User_ID = ? AND id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, value);
+            stmt.setInt(2, userId);
+            stmt.setInt(3, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+    }
+
+    public static void update (int userId, int id, MovieTypeInteger field, int value) {
+        String sql = "UPDATE Movies SET " 
+                + field.getColumn()
+                + " = ? WHERE User_ID = ? AND id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, value);
+            stmt.setInt(2, userId);
+            stmt.setInt(3, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+    }
+
+    public static void update (int userId, int id, MovieTypeText field, String value) {
+        String sql = "UPDATE Movies SET " 
+                + field.getColumn()
+                + " = ? WHERE User_ID = ? AND id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, value);
+            stmt.setInt(2, userId);
+            stmt.setInt(3, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+    }
 }
