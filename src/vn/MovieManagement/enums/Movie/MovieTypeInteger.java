@@ -1,8 +1,7 @@
 package vn.MovieManagement.enums.Movie;
 
-public enum MovieTypeInteger {
-    USER_ID("User_ID"),
-    ID("id");
+public enum MovieTypeInteger implements IMovieType{
+    USER_ID("User_ID");
 
     private final String column;
     MovieTypeInteger(String column) {

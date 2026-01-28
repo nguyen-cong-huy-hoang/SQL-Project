@@ -1,6 +1,6 @@
 package vn.MovieManagement.dao;
 
-import vn.MovieManagement.util.DBConnection;
+import vn.MovieManagement.util.*;
 import vn.MovieManagement.model.Movie;
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ public class MovieDAO {
     
     public static void createTable() {
         String movies = "CREATE TABLE IF NOT EXISTS Movies (" +
-                        "id INTEGER AUTOINCREMENT," +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "Name NCHAR(15) NOT NULL," +
                         "Description TEXT," +
                         "Link TEXT," +
                         "Duration TEXT," +
                         "Date DATE," +
-                        "Code CHAR(10) PRIMARY KEY," +
+                        "Code CHAR(15)," +
                         "User_ID INTEGER," +
                         "FOREIGN KEY (User_ID) REFERENCES Users(id))";
         try (Connection conn = DBConnection.getConnection();
@@ -28,49 +28,51 @@ public class MovieDAO {
         }
     }
 
-     public static void addMovies(String name, String description, String link,
-                                    String duration, String date, String code, int id, int User_ID) {
+     public static boolean addMovies(String name, String description, String link,
+                                    String duration, String date, String code, int User_ID) {
 
-        String sql = "INSERT INTO Movies(id, Name, Description, Link, Duration, Date, Code, User_ID) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        if(StringFormat.stringLimit(15, name) == false || 
+            StringFormat.stringLimit(15, code) == false) return false;
+        String sql = "INSERT INTO Movies(Name, Description, Link, Duration, Date, Code, User_ID) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
-            stmt.setString(2, name);
+            stmt.setString(1, name);
 
             if (description == null || description.isEmpty()) {
-                stmt.setNull(3, Types.VARCHAR);
+                stmt.setNull(2, Types.VARCHAR);
             } else {
-                stmt.setString(3, description);
+                stmt.setString(2, description);
             }
             if (link == null || link.isEmpty()) {
-                stmt.setNull(4, Types.VARCHAR);
+                stmt.setNull(3, Types.VARCHAR);
             } else {
-                stmt.setString(4, link);
+                stmt.setString(3, link);
             }
             if (duration == null || duration.isEmpty()) {
-                stmt.setNull(5, Types.VARCHAR);
+                stmt.setNull(4, Types.VARCHAR);
             } else {
-                stmt.setString(5, duration);
+                stmt.setString(4, duration);
             }
             if (date == null || date.isEmpty()) {
-                stmt.setNull(6, Types.DATE);
+                stmt.setNull(5, Types.DATE);
             } else {
-                stmt.setDate(6, Date.valueOf(date)); 
+                stmt.setDate(5, StringFormat.toSqlDate(date)); 
             }
-
-            stmt.setString(7, code);
-            stmt.setInt(8,User_ID);
+            stmt.setString(6, code);
+            stmt.setInt(7,User_ID);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public static ArrayList<Movie> find(String name, int UserID) {
-        String sql = "SELECT * FROM MOVIES WHERE Name LIKE ? AND UserID = ?";
+        String sql = "SELECT * FROM MOVIES WHERE Name LIKE ? AND User_ID = ?";
         ArrayList<Movie> mv = new ArrayList<>();
         try(Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -78,21 +80,23 @@ public class MovieDAO {
             stmt.setInt(2, UserID);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
+                Date d = rs.getDate("Date");
+                String dateStr = (d == null) ? null : d.toString();
+
                 Movie m = new Movie(
                 rs.getString("Name"),
                 rs.getString("Description"),
                 rs.getString("Link"),
                 rs.getString("Duration"),
-                rs.getString("Date"),
+                dateStr,
                 rs.getString("Code"),
                 rs.getInt("id"),
-                rs.getInt("UserID")
+                rs.getInt("User_ID")
                 );
                 mv.add(m);
             } 
         } catch(SQLException e) {
             e.printStackTrace();
-            return null;
         }
         return mv;
     }
@@ -120,33 +124,36 @@ public class MovieDAO {
 
 
     public static ArrayList<Movie> sort(int UserID, MovieSortField field, boolean desc) {
-        String sql = "SELECT * FROM Movies WHERE UserID = ? ORDER BY " + field.getColumn() + (desc ? " DESC" : " ASC");
+        String sql = "SELECT * FROM Movies WHERE User_ID = ? ORDER BY " + field.getColumn() + (desc ? " DESC" : " ASC");
         ArrayList<Movie> mv = new ArrayList<>();
         try(Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
            stmt.setInt(1, UserID);
            ResultSet rs = stmt.executeQuery();
            while(rs.next()) {
+                Date d = rs.getDate("Date");
+                String dateStr = (d == null) ? null : d.toString();
+
                 Movie m = new Movie(
                 rs.getString("Name"),
                 rs.getString("Description"),
                 rs.getString("Link"),
                 rs.getString("Duration"),
-                rs.getString("Date"),
+                dateStr,
                 rs.getString("Code"),
                 rs.getInt("id"),
-                rs.getInt("UserID")
+                rs.getInt("User_ID")
                 );
                 mv.add(m);
            }
         } catch(SQLException e) {
             e.printStackTrace();
-            return null;
         }       
         return mv;
     }
 
-    public static void update (int userId, int id, MovieTypeChar field, String value) {
+    public static boolean update (int userId, int id, MovieTypeChar field, String value) {
+        if (StringFormat.stringLimit(15, value) == false)  return false;
         String sql = "UPDATE Movies SET " 
                 + field.getColumn()
                 + " = ? WHERE User_ID = ? AND id = ?";
@@ -161,12 +168,14 @@ public class MovieDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-        e.printStackTrace();
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
 
-    public static void update (int userId, int id, MovieTypeDate field, String value) {
+    public static boolean update (int userId, int id, MovieTypeDate field, String value) {
         String sql = "UPDATE Movies SET " 
                 + field.getColumn()
                 + " = ? WHERE User_ID = ? AND id = ?";
@@ -174,18 +183,20 @@ public class MovieDAO {
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, value);
+            stmt.setDate(1, StringFormat.toSqlDate(value));
             stmt.setInt(2, userId);
             stmt.setInt(3, id);
 
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-        e.printStackTrace();
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public static void update (int userId, int id, MovieTypeInteger field, int value) {
+    public static boolean update (int userId, int id, MovieTypeInteger field, int value) {
         String sql = "UPDATE Movies SET " 
                 + field.getColumn()
                 + " = ? WHERE User_ID = ? AND id = ?";
@@ -200,11 +211,13 @@ public class MovieDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-        e.printStackTrace();
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public static void update (int userId, int id, MovieTypeText field, String value) {
+    public static boolean update (int userId, int id, MovieTypeText field, String value) {
         String sql = "UPDATE Movies SET " 
                 + field.getColumn()
                 + " = ? WHERE User_ID = ? AND id = ?";
@@ -219,7 +232,9 @@ public class MovieDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-        e.printStackTrace();
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 }

@@ -1,6 +1,8 @@
 package vn.MovieManagement.enums.Movie;
 
-public enum MovieTypeChar {
+import java.sql.PreparedStatement;
+
+public enum MovieTypeChar implements IMovieType{
     NAME("Name"),
     CODE("Code");
 
@@ -13,5 +15,9 @@ public enum MovieTypeChar {
         return this.column;
     }
 
-
+    public void bind(PreparedStatement stmt, int idx, Object value) {
+        if(value == null) {
+            
+        }
+    }
 }

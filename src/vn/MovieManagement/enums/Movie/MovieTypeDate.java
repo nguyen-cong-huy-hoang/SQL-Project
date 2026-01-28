@@ -1,6 +1,6 @@
 package vn.MovieManagement.enums.Movie;
 
-public enum MovieTypeDate {
+public enum MovieTypeDate implements IMovieType{
     DATE("Date");    
 
     private final String column;
@@ -10,4 +10,6 @@ public enum MovieTypeDate {
     public String getColumn() {
         return this.column;
     }
+
+    public void bind 
 }

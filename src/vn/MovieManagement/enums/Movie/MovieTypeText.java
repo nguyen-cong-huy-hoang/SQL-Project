@@ -1,6 +1,6 @@
 package vn.MovieManagement.enums.Movie;
 
-public enum MovieTypeText {
+public enum MovieTypeText implements IMovieType{
     DESCRIPTION("Description"),
     LINK("Link"),
     DURATION("Duration");
