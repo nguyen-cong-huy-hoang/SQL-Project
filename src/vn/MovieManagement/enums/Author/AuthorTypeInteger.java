@@ -18,7 +18,7 @@ public enum AuthorTypeInteger implements IAuthorType{
 
     public void bind(PreparedStatement stmt, int idx, Object value) throws SQLException {
         if (value == null) {
-            stmt.setNull(idx, Types.VARCHAR);
+            stmt.setNull(idx, Types.INTEGER);
         } else {
             stmt.setInt(idx, (int)value);
         }
