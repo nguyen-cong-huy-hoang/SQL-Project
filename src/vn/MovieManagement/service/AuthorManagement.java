@@ -19,7 +19,7 @@ public class AuthorManagement implements IAuthorManagement {
 
 
     public void add(int id, author Author) {
-        authorManagement.set(id, Author);
+        authorManagement.add(id, Author);
         Size++;
     }
     
