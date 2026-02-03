@@ -12,7 +12,7 @@ public class MovieManagement implements IMovieManagement {
     }
 
     public int Size() {
-        return this.Size();
+        return this.Size;
     }
 
     public void add(int id, Movie movie) {
