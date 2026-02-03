@@ -4,7 +4,8 @@ import vn.MovieManagement.util.*;
 import vn.MovieManagement.model.Movie;
 import java.sql.*;
 import java.util.ArrayList;
-import vn.MovieManagement.enums.Movie.*;
+import vn.MovieManagement.enums.Movie.IMovieType;
+import vn.MovieManagement.enums.Movie.MovieSortField;
 
 public class MovieDAO {
     
@@ -152,8 +153,7 @@ public class MovieDAO {
         return mv;
     }
 
-    public static boolean update (int userId, int id, MovieTypeChar field, String value) {
-        if (StringFormat.stringLimit(15, value) == false)  return false;
+    public static boolean update (int userId, int id, IMovieType field, String value) {
         String sql = "UPDATE Movies SET " 
                 + field.getColumn()
                 + " = ? WHERE User_ID = ? AND id = ?";
@@ -161,80 +161,17 @@ public class MovieDAO {
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, value);
+            field.bind(stmt, 1, value);
             stmt.setInt(2, userId);
             stmt.setInt(3, id);
 
             stmt.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | IllegalArgumentException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
 
-
-    public static boolean update (int userId, int id, MovieTypeDate field, String value) {
-        String sql = "UPDATE Movies SET " 
-                + field.getColumn()
-                + " = ? WHERE User_ID = ? AND id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setDate(1, StringFormat.toSqlDate(value));
-            stmt.setInt(2, userId);
-            stmt.setInt(3, id);
-
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean update (int userId, int id, MovieTypeInteger field, int value) {
-        String sql = "UPDATE Movies SET " 
-                + field.getColumn()
-                + " = ? WHERE User_ID = ? AND id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, value);
-            stmt.setInt(2, userId);
-            stmt.setInt(3, id);
-
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean update (int userId, int id, MovieTypeText field, String value) {
-        String sql = "UPDATE Movies SET " 
-                + field.getColumn()
-                + " = ? WHERE User_ID = ? AND id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, value);
-            stmt.setInt(2, userId);
-            stmt.setInt(3, id);
-
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 }

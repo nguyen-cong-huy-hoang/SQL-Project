@@ -3,7 +3,6 @@ package vn.MovieManagement.dao;
 import vn.MovieManagement.util.DBConnection;
 import java.sql.*;
 
-import org.w3c.dom.UserDataHandler;
 
 
 public class UserDAO {
