@@ -2,6 +2,11 @@ package vn.MovieManagement.service;
 
 import vn.MovieManagement.model.author;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
 
 public class AuthorManagement implements IAuthorManagement {
     private ArrayList<author> authorManagement;
@@ -34,49 +39,36 @@ public class AuthorManagement implements IAuthorManagement {
         Size = 0;
     }
 
-    public void print() {
-        String format = "| %-10s | %-30.30s | %-5s | %-30.30s | %-30s |%n";
-        int descWidth = 30; 
-
-        String header = String.format(format, "ID", "NAME", "AGE", "COUNTRY", "DESCRIPTION");
-        int tableLength = header.length() - System.lineSeparator().length();
-        String separator = "-".repeat(tableLength);
-
-        System.out.println(separator);
-        System.out.print(header);
-        System.out.println(separator);
-
+   public void print() {
         if (authorManagement == null || authorManagement.isEmpty()) {
-            String msg = "DATA DOES NOT EXIST";
-            System.out.printf("| %-" + (tableLength - 4) + "s |%n", msg);
-        } else {
-            for (author a : authorManagement) {
-                String desc = (a.getDescription() == null ? "" : a.getDescription());
-                
-                String firstPart = desc.length() > descWidth ? desc.substring(0, descWidth) : desc;
-                
-   
-                System.out.printf(format, 
-                    String.valueOf(a.getID()), 
-                    a.getName(), 
-                    a.getAge(), 
-                    a.getCountry(), 
-                    firstPart
-                );
-
-                int start = descWidth;
-                while (start < desc.length()) {
-                    int end = Math.min(start + descWidth, desc.length());
-                    String subDesc = desc.substring(start, end);
-                    
-                    System.out.printf("| %-10s | %-30s | %-5s | %-30s | %-30s |%n", 
-                                    "", "", "", "", subDesc);
-                    start += descWidth;
-                }
-               
-            }
+            System.out.println("\n[!] DATA DOES NOT EXIST\n");
+            return;
         }
-        System.out.println(separator);
-    }
 
+        String table = AsciiTable.getTable(AsciiTable.BASIC_ASCII, authorManagement, Arrays.asList(
+            new Column().header("ID")
+                        .headerAlign(HorizontalAlign.CENTER)
+                        .dataAlign(HorizontalAlign.CENTER)
+                        .with(a -> String.valueOf(a.getID())),
+
+            new Column().header("NAME")
+                        .maxWidth(30)
+                        .with(author::getName),
+
+            new Column().header("AGE")
+                        .headerAlign(HorizontalAlign.CENTER)
+                        .dataAlign(HorizontalAlign.CENTER)
+                        .with(a -> String.valueOf(a.getAge())),
+
+            new Column().header("COUNTRY")
+                        .maxWidth(30)
+                        .with(author::getCountry),
+
+            new Column().header("DESCRIPTION")
+                        .maxWidth(30)
+                        .with(a -> a.getDescription() == null ? "" : a.getDescription())
+        ));
+
+        System.out.println(table);
+    }
 }
