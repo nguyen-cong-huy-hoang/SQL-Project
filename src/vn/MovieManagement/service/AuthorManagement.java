@@ -35,7 +35,7 @@ public class AuthorManagement implements IAuthorManagement {
     }
 
     public void print() {
-        String format = "| %-10s | %-15.15s | %-5s | %-15.15s | %-30s |%n";
+        String format = "| %-10s | %-30.30s | %-5s | %-30.30s | %-30s |%n";
         int descWidth = 30; 
 
         String header = String.format(format, "ID", "NAME", "AGE", "COUNTRY", "DESCRIPTION");
@@ -69,7 +69,7 @@ public class AuthorManagement implements IAuthorManagement {
                     int end = Math.min(start + descWidth, desc.length());
                     String subDesc = desc.substring(start, end);
                     
-                    System.out.printf("| %-10s | %-15s | %-5s | %-15s | %-30s |%n", 
+                    System.out.printf("| %-10s | %-30s | %-5s | %-30s | %-30s |%n", 
                                     "", "", "", "", subDesc);
                     start += descWidth;
                 }

@@ -25,7 +25,7 @@ public enum AuthorTypeChar implements IAuthorType{
             throw new IllegalArgumentException("value of column can not be null");
         } else {
             String v = (String) value;
-            if (!StringFormat.stringLimit(15, v))
+            if (!StringFormat.stringLimit(30, v))
                 throw new IllegalArgumentException("Too long");
             stmt.setString(idx, v);
         }

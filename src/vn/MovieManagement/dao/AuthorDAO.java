@@ -15,10 +15,10 @@ public class AuthorDAO {
     public static boolean createTable() {
         String authors = "CREATE TABLE IF NOT EXISTS Authors (" +
                          "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                         "Name NCHAR(15) NOT NULL," +
+                         "Name NCHAR(30) NOT NULL," +
                          "Description TEXT," +
                          "Age INTEGER," +
-                         "Country NCHAR(15) NOT NULL," +
+                         "Country NCHAR(30) NOT NULL," +
                          "User_ID INTEGER," +
                          "FOREIGN KEY (User_ID) REFERENCES Users(id))";
         try (Connection conn = DBConnection.getConnection();
@@ -35,8 +35,8 @@ public class AuthorDAO {
     public static boolean addAuthor(String name, String description,
                                     int age, String country, int User_ID) {
 
-        if(StringFormat.stringLimit(15, name) == false || 
-            StringFormat.stringLimit(15, country) == false) return false;
+        if(StringFormat.stringLimit(30, name) == false || 
+            StringFormat.stringLimit(30, country) == false) return false;
         String sql = "INSERT INTO Authors(Name, Description, Age, Country, User_ID) " +
                      "VALUES (?, ?, ?, ?, ?)";
         
