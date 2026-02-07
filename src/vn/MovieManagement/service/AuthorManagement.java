@@ -35,12 +35,10 @@ public class AuthorManagement implements IAuthorManagement {
     }
 
     public void print() {
+        String format = "| %-10s | %-15.15s | %-5s | %-15.15s | %-30s |%n";
+        int descWidth = 30; 
 
-        String format = "| %-10d | %-15.15s | %-5s | %-15.15s | %-30.30s |%n";
-
- 
         String header = String.format(format, "ID", "NAME", "AGE", "COUNTRY", "DESCRIPTION");
-
         int tableLength = header.length() - System.lineSeparator().length();
         String separator = "-".repeat(tableLength);
 
@@ -48,25 +46,37 @@ public class AuthorManagement implements IAuthorManagement {
         System.out.print(header);
         System.out.println(separator);
 
-
         if (authorManagement == null || authorManagement.isEmpty()) {
             String msg = "DATA DOES NOT EXIST";
-    
-            int padding = (tableLength - msg.length() - 4);
             System.out.printf("| %-" + (tableLength - 4) + "s |%n", msg);
         } else {
             for (author a : authorManagement) {
-                System.out.printf(format,
-                    a.getID(),              
-                    a.getName(),         
-                    a.getAge(),         
-                    a.getCountry(),                  
-                    (a.getDescription() == null ? "" : a.getDescription())
+                String desc = (a.getDescription() == null ? "" : a.getDescription());
+                
+                String firstPart = desc.length() > descWidth ? desc.substring(0, descWidth) : desc;
+                
+   
+                System.out.printf(format, 
+                    String.valueOf(a.getID()), 
+                    a.getName(), 
+                    a.getAge(), 
+                    a.getCountry(), 
+                    firstPart
                 );
+
+                int start = descWidth;
+                while (start < desc.length()) {
+                    int end = Math.min(start + descWidth, desc.length());
+                    String subDesc = desc.substring(start, end);
+                    
+                    System.out.printf("| %-10s | %-15s | %-5s | %-15s | %-30s |%n", 
+                                    "", "", "", "", subDesc);
+                    start += descWidth;
+                }
+               
             }
         }
         System.out.println(separator);
     }
-
 
 }
