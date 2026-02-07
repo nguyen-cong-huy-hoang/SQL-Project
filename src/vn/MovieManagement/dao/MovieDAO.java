@@ -12,7 +12,7 @@ public class MovieDAO {
     public static void createTable() {
         String movies = "CREATE TABLE IF NOT EXISTS Movies (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "Name NCHAR(15) NOT NULL," +
+                        "Name NCHAR(30) NOT NULL," +
                         "Description TEXT," +
                         "Link TEXT," +
                         "Duration TEXT," +
@@ -32,7 +32,7 @@ public class MovieDAO {
      public static boolean addMovies(String name, String description, String link,
                                     String duration, String date, String code, int User_ID) {
 
-        if(StringFormat.stringLimit(15, name) == false || 
+        if(StringFormat.stringLimit(30, name) == false || 
             StringFormat.stringLimit(15, code) == false) return false;
         String sql = "INSERT INTO Movies(Name, Description, Link, Duration, Date, Code, User_ID) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?)";

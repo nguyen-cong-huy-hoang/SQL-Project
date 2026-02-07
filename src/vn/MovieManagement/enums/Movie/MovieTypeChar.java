@@ -25,7 +25,7 @@ public enum MovieTypeChar implements IMovieType{
             stmt.setNull(idx, Types.VARCHAR);
         } else {
             String v = (String) value;
-            if (!StringFormat.stringLimit(15, v))
+            if ((!StringFormat.stringLimit(30, v) && this == MovieTypeChar.NAME )|| (!StringFormat.stringLimit(15, v) && this == MovieTypeChar.CODE))
                 throw new IllegalArgumentException("Too long");
             stmt.setString(idx, v);
         }
