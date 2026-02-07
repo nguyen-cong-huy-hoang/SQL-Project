@@ -32,10 +32,10 @@ public class MovieManagement implements IMovieManagement {
     }
 
     public void print() {
-        String format = "| %-10d | %-15.15s | %-10s | %-12s | %-10s | %-30.30s |%n";
+        String format = "| %-10s | %-15.15s | %-10s | %-12s | %-10s | %-30s |%n";
+        int descWidth = 30; 
 
         String header = String.format(format, "ID", "NAME", "DURATION", "CODE", "DATE", "DESCRIPTION");
-
         int tableLength = header.length() - System.lineSeparator().length();
         String separator = "-".repeat(tableLength);
 
@@ -45,22 +45,31 @@ public class MovieManagement implements IMovieManagement {
 
         if (movieManagement == null || movieManagement.isEmpty()) {
             String msg = "DATA DOES NOT EXIST";
-            int padding = (tableLength - msg.length() - 2); 
-            System.out.printf("| %-" + padding + "s |%n", msg);
+            System.out.printf("| %-" + (tableLength - 4) + "s |%n", msg);
         } else {
             for (Movie m : movieManagement) {
+                String desc = (m.getDescription() == null ? "" : m.getDescription());
 
-                    System.out.printf(format,
-                        m.getID(),               
-                        m.getName(),                    
-                        m.getDuration(),         
-                        m.getCode(),                
-                        String.valueOf(m.getDate()), 
-                        (m.getDescription() == null ? "" : m.getDescription()) 
-                    );
+                String firstPart = desc.length() > descWidth ? desc.substring(0, descWidth) : desc;
+                System.out.printf(format,
+                    String.valueOf(m.getID()),
+                    m.getName(),
+                    m.getDuration(),
+                    m.getCode(),
+                    String.valueOf(m.getDate()),
+                    firstPart
+                );
+
+                int start = descWidth;
+                while (start < desc.length()) {
+                    int end = Math.min(start + descWidth, desc.length());
+                    String subDesc = desc.substring(start, end);        
+                    System.out.printf("| %-10s | %-15s | %-10s | %-12s | %-10s | %-30s |%n",
+                                    "", "", "", "", "", subDesc);
+                    start += descWidth;
                 }
             }
+        }
         System.out.println(separator);
     }
-
 }
