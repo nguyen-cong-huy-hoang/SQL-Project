@@ -51,7 +51,7 @@ public class InputUtils {
         System.out.print(message);
         String input = scanner.nextLine().trim();
     
-        if (input.isEmpty()) {
+        if (input.isEmpty() || input == "") {
             return null; 
         }
         return input;

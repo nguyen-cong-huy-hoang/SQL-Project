@@ -18,7 +18,7 @@ public class MovieDAO {
                         "Duration TEXT," +
                         "Date DATE," +
                         "Code CHAR(15)," +
-                        "User_ID INTEGER," +
+                        "User_ID INTEGER NOT NULL," +
                         "FOREIGN KEY (User_ID) REFERENCES Users(id))";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -27,6 +27,35 @@ public class MovieDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<Movie> Select(int User_ID) {
+        String sql = "SELECT * FROM Movies WHERE User_ID = ?";
+        ArrayList<Movie> mv = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, User_ID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Date d = rs.getDate("Date");
+                String dateStr = (d == null) ? null : d.toString();
+
+                Movie m = new Movie(
+                rs.getString("Name"),
+                rs.getString("Description"),
+                rs.getString("Link"),
+                rs.getString("Duration"),
+                dateStr,
+                rs.getString("Code"),
+                rs.getInt("id"),
+                rs.getInt("User_ID")
+                );
+                mv.add(m);
+            } 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mv;
     }
 
      public static boolean addMovies(String name, String description, String link,

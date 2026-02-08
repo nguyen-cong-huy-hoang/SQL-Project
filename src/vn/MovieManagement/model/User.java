@@ -4,9 +4,10 @@ public class User {
     private String user;
     private String passWord;
     private int id;
-    public User(String user, String password) {
+    public User(String user, String password, int id) {
         this.user = user;
         this.passWord = password;
+        this.id = id;
     }
 
     public String getUser() { return this.user; }
