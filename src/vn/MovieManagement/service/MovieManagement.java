@@ -25,6 +25,12 @@ public class MovieManagement implements IMovieManagement {
         Size++;
     }
 
+    public void add(ArrayList<Movie> m) {
+        for(Movie x : m) {
+            add(x.getID(), x);
+        }
+    }
+
     public void remove(int id) {
         if(Size == 0) return;
         movieManagement.remove(id);
