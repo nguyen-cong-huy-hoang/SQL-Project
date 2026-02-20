@@ -58,13 +58,38 @@ public class InputUtils {
     }
 
     public static int inputIntegeroptional(String message) {
-        System.out.print(message);
-        try {
+        while (true) {
+            System.out.print(message);
             String input = scanner.nextLine().trim();
-            int number = Integer.parseInt(input);
-            return number;
-        } catch (NumberFormatException e) {
-            return -1;
+            if (input.isEmpty()) {
+                return -1; 
+            }
+            try {
+                return Integer.parseInt(input); 
+            } catch (NumberFormatException e) {
+                System.out.println(">> Error: Please enter a valid number, or press Enter to skip!");
+            }
+        }
+    }
+
+    public static String inputStringToDate(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) {
+                    return null; 
+                }
+                StringFormat.parseSqlDate(input); 
+                
+                if (StringFormat.isValidDate(input)) {
+                    return input;
+                } else {
+                    System.out.println(">> Error: Date does not exist!");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println(">> Error: " + e.getMessage());
+            }
         }
     }
 }
