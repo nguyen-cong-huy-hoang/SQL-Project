@@ -3,7 +3,8 @@ package vn.MovieManagement.service;
 import vn.MovieManagement.model.author;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.HashMap;
+import java.util.Map;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
@@ -11,32 +12,52 @@ import com.github.freva.asciitable.HorizontalAlign;
 public class AuthorManagement implements IAuthorManagement {
     private ArrayList<author> authorManagement;
     private int Size;
-
+    private Map<Integer, Integer> idMapping; 
 
     public AuthorManagement() {
         authorManagement = new ArrayList<>();
         Size = 0;
+        idMapping = new HashMap<>();
     }
 
     public int Size() {
-        return this.Size;
+        return this.authorManagement.size();
+    }
+
+    public void add(author Author) {
+        authorManagement.add(Author); 
+        Size++;
+        rebuildMapping();
     }
 
 
-    public void add(int id, author Author) {
-        authorManagement.add(id, Author);
-        Size++;
+    public void add(ArrayList<author> author) {
+        for(author x : author) {
+            authorManagement.add(x);
+        }
+        Size = authorManagement.size();
+        rebuildMapping(); 
     }
     
-    public void remove(int id) {
-        if(Size == 0) return;
-        authorManagement.remove(id);
+    public void remove(int index) {
+        if (Size == 0 || index < 0 || index >= Size) return; 
+        
+        authorManagement.remove(index);
         Size--;
+        rebuildMapping(); 
     }
 
     public void clear() {
         authorManagement.clear();
+        idMapping.clear();
         Size = 0;
+    }
+
+    private void rebuildMapping() {
+        idMapping.clear();
+        for (int i = 0; i < authorManagement.size(); i++) {
+            idMapping.put(authorManagement.get(i).getID(), i + 1); 
+        }
     }
 
    public void print() {
@@ -46,10 +67,10 @@ public class AuthorManagement implements IAuthorManagement {
         }
 
         String table = AsciiTable.getTable(AsciiTable.BASIC_ASCII, authorManagement, Arrays.asList(
-            new Column().header("ID")
+            new Column().header("STT")
                         .headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
-                        .with(a -> String.valueOf(a.getID())),
+                        .with(a -> String.valueOf(adapterID(a))),
 
             new Column().header("NAME")
                         .maxWidth(30)
@@ -70,5 +91,18 @@ public class AuthorManagement implements IAuthorManagement {
         ));
 
         System.out.println(table);
+    }
+
+    private int adapterID(author m) {
+        return idMapping.getOrDefault(m.getID(), -1);
+    }
+
+    public int getIdFromStt(int stt) {
+        if (stt < 1 || stt > authorManagement.size()) {
+            return -1; 
+        }
+        int index = stt - 1;
+        author m = authorManagement.get(index);
+        return m.getID();
     }
 }

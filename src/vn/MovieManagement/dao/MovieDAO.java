@@ -142,12 +142,13 @@ public class MovieDAO {
         }
     }
 
-    public static void clear() {
-        String sql = "DELETE FROM Movies";
-        try(Connection conn = DBConnection.getConnection();
-            Statement stmt = conn.createStatement()) {
-           stmt.executeUpdate(sql);
-        } catch(SQLException e) {
+    public static void clear(int User_ID) {
+        String sql = "DELETE FROM Movies WHERE User_ID = ?";
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) { 
+            stmt.setInt(1, User_ID);
+            stmt.executeUpdate(); 
+        } catch (SQLException e) {
             e.printStackTrace();
         }        
     }

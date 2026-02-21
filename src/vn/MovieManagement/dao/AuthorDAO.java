@@ -1,6 +1,7 @@
 package vn.MovieManagement.dao;
 
 import vn.MovieManagement.enums.Author.*;
+import vn.MovieManagement.model.Movie;
 import vn.MovieManagement.model.author;
 import vn.MovieManagement.util.DBConnection;
 import vn.MovieManagement.util.StringFormat;
@@ -30,6 +31,30 @@ public class AuthorDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static ArrayList<author> Select(int User_ID) {
+        String sql = "SELECT * FROM Authors WHERE User_ID = ?";
+        ArrayList<author> au = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, User_ID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                author a = new author(
+                rs.getString("Name"),
+                rs.getString("Description"),
+                rs.getInt("age"),
+                rs.getString("country"),
+                rs.getInt("id"),
+                rs.getInt("User_ID")
+                );
+                au.add(a);
+            } 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return au;    
     }
 
     public static boolean addAuthor(String name, String description,
@@ -105,15 +130,16 @@ public class AuthorDAO {
         }
     }
 
-    public static void clear() {
-        String sql = "DELETE FROM Authors";
-        try(Connection conn = DBConnection.getConnection();
-            Statement stmt = conn.createStatement()) {
-           stmt.executeUpdate(sql);
-        } catch(SQLException e) {
+    public static void clear(int User_ID) {
+        String sql = "DELETE FROM Authors WHERE User_ID = ?";
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, User_ID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }        
-    }   
+    }
 
     public static ArrayList<author> sort(int UserID, AuthorSortField field, boolean desc) {
         String sql = "SELECT * FROM Authors WHERE User_ID = ? ORDER BY " + field.getColumn() + (desc ? " DESC" : " ASC");
