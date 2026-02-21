@@ -1,29 +1,25 @@
 package vn.MovieManagement;
 
-import static org.mockito.ArgumentMatchers.isNull;
-
-import java.util.ArrayList;
-
 import vn.MovieManagement.dao.*;
-import vn.MovieManagement.enums.Movie.MovieSortField;
+import vn.MovieManagement.enums.Movie.*;
 import vn.MovieManagement.model.*;
 import vn.MovieManagement.service.IMovieManagement;
 import vn.MovieManagement.service.MovieManagement;
 import vn.MovieManagement.util.*;
 
 public class Main {
- 
     private static User user = null;
     private static IMovieManagement mv = new MovieManagement();
+
     public static void main(String[] args) {
-        DatabaseInitializer.init(); 
+        DatabaseInitializer.init();
 
         while (user == null) {
             System.out.println("\n====== WELCOME TO MOVIE APP ======");
             System.out.println("1. Login");
             System.out.println("2. Register");
             System.out.println("0. Exit");
-            
+
             int choice = InputUtils.inputInteger("Please choose an option: ", 0, 2);
 
             switch (choice) {
@@ -38,9 +34,9 @@ public class Main {
                     System.exit(0);
             }
         }
-
-        System.out.println("\nLogin successfully! Welcome, " + user.getUser());
-        
+        clearScreen();
+        System.out.println("\nLogin successfully! Welcome, " + user.getUser()); 
+        showMainMenu();
     }
 
     private static void login() {
@@ -48,38 +44,36 @@ public class Main {
         while (true) {
             clearScreen();
             System.out.println("---------- LOGIN ----------");
-            
+
             String name = InputUtils.inputString("Username: ");
             String pass = InputUtils.inputString("Password: ");
-  
+
             int userId = UserDAO.checkLogin(name, pass);
             if (userId != -1) {
                 user = new User(name, pass, userId);
-                return; 
+                return;
             } else {
                 System.out.println(">> Error: Incorrect username or password!");
                 failCount++;
 
                 if (failCount >= 3) {
                     String ans = InputUtils.inputString("Failed 3 times. Do you want to Register instead? (y/n): ");
- 
                     if (ans.equalsIgnoreCase("y")) {
-                        register(); 
-                        return;   
+                        register();
+                        return;
                     }
-                    failCount = 0; 
+                    failCount = 0;
                 }
             }
         }
     }
-
 
     private static void register() {
         int failCount = 0;
         while (true) {
             clearScreen();
             System.out.println("---------- REGISTER ----------");
-            
+
             String name = InputUtils.inputString("New Username: ");
             String pass = InputUtils.inputString("New Password: ");
 
@@ -96,9 +90,8 @@ public class Main {
 
                 if (failCount >= 3) {
                     String ans = InputUtils.inputString("Username taken often. Do you want to Login? (y/n): ");
-                    
                     if (ans.equalsIgnoreCase("y")) {
-                        login(); 
+                        login();
                         return;
                     }
                     failCount = 0;
@@ -113,141 +106,198 @@ public class Main {
             System.out.println("1. Movie Management");
             System.out.println("2. Author Management");
             System.out.println("0. Logout");
-            
+
             int choice = InputUtils.inputInteger("Choose function: ", 0, 2);
-            
+
             switch (choice) {
                 case 1:
-                    // Gọi hàm menuMovies() bạn đã viết
-                    // menuMovies(); 
-                    System.out.println("Feature Movie Management coming soon...");
+                    menuMovies();
                     break;
                 case 2:
-                    // Gọi hàm menuAuthors() bạn đã viết
-                    // menuAuthors();
                     System.out.println("Feature Author Management coming soon...");
                     break;
                 case 0:
                     System.out.println("Logging out...");
-                    user = null; 
-                    main(null); 
+                    user = null;
+                    main(null);
                     return;
             }
         }
     }
 
+ 
+    private static void reloadMoviesData() {
+        mv.clear(); 
+        mv.add(MovieDAO.Select(user.getID())); 
+    }
+
     private static void menuMovies() {
-        mv.add(MovieDAO.Select(user.getID()));
-        while(true) {
+        clearScreen();
+        reloadMoviesData(); 
+        while (true) {
             System.out.println("\n====== MOVIE MENU ======");
-            System.out.println("1. print all");
-            System.out.println("2. add a new movie");
-            System.out.println("3. delete a movie");
-            System.out.println("4. find");
-            System.out.println("5. sort");
-            System.out.println("6. update");
-            System.out.println("0. exit");
+            System.out.println("1. Print all");
+            System.out.println("2. Add a new movie");
+            System.out.println("3. Delete a movie");
+            System.out.println("4. Find");
+            System.out.println("5. Sort");
+            System.out.println("6. Update");
+            System.out.println("0. Exit to Main Menu");
+            System.out.println("==========================\n");
             
-            System.out.println("========================== \n \n");
-            mv.print();
+            mv.print(); 
             int choose = InputUtils.inputInteger("Please choose an option: ", 0, 6);
-            
+
             switch (choose) {
                 case 1:
-                    mv.add(MovieDAO.Select(user.getID()));                
+                    clearScreen();
+                    reloadMoviesData(); 
                     break;
                 case 2:
-                    addMoive();
+                    addMovie(); 
                     break;
                 case 3:
-                    int input = InputUtils.inputIntegeroptional("Please enter the ID of the movie you wish to delete: ");
-                    System.out.println("If you don't want to type, just press enter");
-                    if(input != -1) {
-                        MovieDAO.remove(input);
-                        mv.remove(input);
+                    int stt = InputUtils.inputIntegeroptional("Enter STT of the movie to delete (Press Enter to cancel): ");
+                    if (stt != -1) {
+                        int dbId = mv.getIdFromStt(stt);
+                        if (dbId != -1) {
+                            MovieDAO.remove(dbId); 
+                            reloadMoviesData();    
+                            System.out.println(">> Deleted successfully!");
+                        } else {
+                            System.out.println(">> Error: Invalid STT!");
+                        }
+                    }
+                    break;
+                case 4:
+                    clearScreen();
+                    String name = InputUtils.inputStringOptional("Enter movie name to find: ");
+                    if (name != null) {
+                        mv.clear();
+                        mv.add(MovieDAO.find(name, user.getID())); 
                     }
                     break; 
-                case 4:
-                    String name = InputUtils.inputStringOptional("Please enter the name of the movie you are looking for: ");
-                    if(name != null) {
-                        mv.add(MovieDAO.find(name, user.getID()));
-                    } 
                 case 5:
                     sortMovie();
                     break;
                 case 6:
-
-                default:
+                    updateMovie(); 
                     break;
+                case 0:
+                    clearScreen();
+                    return; 
             }
         }
     }
 
-    private static void addMoive() {
-        String name = InputUtils.inputString("Please enter name: ");
-        clearScreen();
-        System.out.println("If you don't want to type, just press enter");
-        String description = InputUtils.inputStringOptional("Please enter description: ");
+    private static void addMovie() {
+        System.out.println("--- ADD MOVIE (Press Enter to skip optional fields) ---");
+        String name = InputUtils.inputString("Name (Required): ");
         clearPreviousLine();
-        String link = InputUtils.inputStringOptional("Please enter link: ");
+        
+        String description = InputUtils.inputStringOptional("Description: ");
         clearPreviousLine();
-        String duration = InputUtils.inputStringOptional("Please enter duration: ");
+        
+        String link = InputUtils.inputStringOptional("Link: ");
         clearPreviousLine();
-        String date = InputUtils.inputStringToDate("Please enter in yyyy-mm-dd format: ");
+        
+        String duration = InputUtils.inputStringOptional("Duration: ");
         clearPreviousLine();
-        String code = InputUtils.inputStringOptional("Please enter code: ");
-        if(!MovieDAO.addMovies(name, description, link, duration, date, code, user.getID())) {
-            System.out.println("Adding a new movie was a failure! ");
+        
+        String date = InputUtils.inputStringToDate("Date (yyyy-mm-dd): ");
+        clearPreviousLine();
+        
+        String code = InputUtils.inputStringOptional("Code: ");
+        
+        if (!MovieDAO.addMovies(name, description, link, duration, date, code, user.getID())) {
+            System.out.println(">> Adding a new movie failed!");
+        } else {
+            System.out.println(">> Added successfully!");
         }
-        mv.add(MovieDAO.Select(user.getID()));
+        reloadMoviesData(); 
     }
 
     private static void sortMovie() {
         System.out.println("1. Name");
         System.out.println("2. Duration");
         System.out.println("3. Date");
-        int option = InputUtils.inputInteger("sort by:  ",1,3);
-        String ans = InputUtils.inputString("Do you want to sort in ascending order? (y/n) : ");
-        boolean desc = false;
+        int option = InputUtils.inputInteger("Sort by: ", 1, 3);
+        
+        String ans = InputUtils.inputString("Sort in ascending order? (y/n) : ");
+      
+        boolean desc = true; 
         if (ans.equalsIgnoreCase("y")) {
-            desc = true;
-        } 
+            desc = false; 
+        }
+
+        mv.clear(); 
         switch (option) {
             case 1:
-                mv.add(MovieDAO.sort(user.getID(), MovieSortField.NAME, desc));       
-            break;
+                mv.add(MovieDAO.sort(user.getID(), MovieSortField.NAME, desc));
+                break;
             case 2:
-                mv.add(MovieDAO.sort(user.getID(), MovieSortField.DURATION, desc));       
-            break;   
+                mv.add(MovieDAO.sort(user.getID(), MovieSortField.DURATION, desc));
+                break;
             case 3:
-                mv.add(MovieDAO.sort(user.getID(), MovieSortField.DATE, desc));       
-            break;
+                mv.add(MovieDAO.sort(user.getID(), MovieSortField.DATE, desc));
+                break;
         }
     }
 
     private static void updateMovie() {
-        System.out.println("1. Name");
-        System.out.println("2. Duration");
-        System.out.println("3. Code");
-        System.out.println("4. Date");
-        System.out.println("5. Link");
-        System.out.println("6. Description");
-        
-        int choose = InputUtils.inputInteger("Please select the column you wish to change: ", 1, 6);
+        if (mv.Size() == 0) {
+            System.out.println(">> No movies to update!");
+            return;
+        }
 
+        int stt = InputUtils.inputInteger("Select the STT of the movie to edit: ", 1, mv.Size());
+        int dbId = mv.getIdFromStt(stt);
+
+        System.out.println("1. Name\n2. Duration\n3. Code\n4. Date\n5. Link\n6. Description");
+        int choose = InputUtils.inputInteger("Select the column to change: ", 1, 6);
+
+        boolean success = false;
         switch (choose) {
             case 1:
+                String name = InputUtils.inputString("Enter new name: ");
+                success = MovieDAO.update(user.getID(), dbId, MovieTypeChar.NAME, name);
                 break;
-        
-            default:
+            case 2:
+                String duration = InputUtils.inputStringOptional("Enter new duration: ");
+                success = MovieDAO.update(user.getID(), dbId, MovieTypeText.DURATION, duration);
+                break;
+            case 3:
+                String code = InputUtils.inputStringOptional("Enter new code: ");
+                success = MovieDAO.update(user.getID(), dbId, MovieTypeChar.CODE, code);
+                break;
+            case 4:
+                String date = InputUtils.inputStringToDate("Enter new date (yyyy-mm-dd): ");
+                success = MovieDAO.update(user.getID(), dbId, MovieTypeDate.DATE, date);
+                break;
+            case 5:
+                String link = InputUtils.inputStringOptional("Enter new link: ");
+                success = MovieDAO.update(user.getID(), dbId, MovieTypeText.LINK, link);
+                break;
+            case 6:
+                String description = InputUtils.inputStringOptional("Enter new description: ");
+                success = MovieDAO.update(user.getID(), dbId, MovieTypeText.DESCRIPTION, description);
                 break;
         }
 
+        if (success) {
+            System.out.println(">> Updated successfully!");
+        } else {
+            System.out.println(">> Update failed!");
+        }
+        
+        reloadMoviesData(); 
     }
+
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
+
     public static void clearPreviousLine() {
         System.out.print("\033[1A\033[2K");
         System.out.flush();
